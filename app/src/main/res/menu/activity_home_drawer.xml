@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_top_movies"
+            android:icon="@android:drawable/ic_menu_slideshow"
+            android:title="@string/menu_top_movies" />
+        <item
+            android:id="@+id/nav_new_movie"
+            android:icon="@drawable/ic_new_movie"
+            android:title="@string/menu_new_movie" />
+    </group>
+
+    <item android:title="@string/divide_menu_in_app">
+        <menu>
+            <item
+                android:id="@+id/nav_gallery"
+                android:icon="@drawable/ic_archive_black_24dp"
+                android:title="@string/menu_archived_movies" />
+        </menu>
+    </item>
+
+</menu>

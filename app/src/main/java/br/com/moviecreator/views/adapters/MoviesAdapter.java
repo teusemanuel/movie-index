@@ -16,6 +16,7 @@
 package br.com.moviecreator.views.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,7 +56,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesHold
 
     @Override
     public void onBindViewHolder(MoviesHolder holder, int position) {
-
+        if(movies != null && movies.size() > 0) {
+            Movie movie = movies.get(position);
+            holder.setMovie(movie);
+        }
     }
 
     @Override
@@ -92,13 +96,18 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesHold
             movieNameTextView = (TextView) itemView.findViewById(R.id.card_movie_title);
             movieDetailTextView = (TextView) itemView.findViewById(R.id.card_movie_details);
 
+            itemView.setOnClickListener(this);
         }
 
         public void setMovie(Movie movie) {
             this.movie = movie;
 
 
-            posterImageView.setImageUrl(movie.getPoster(), App.getApplication().getImageLoader());
+            if(!TextUtils.isEmpty(movie.getPoster()) && movie.getPoster().startsWith("http://ia.media-imdb.com")) {
+                posterImageView.setImageUrl(movie.getPoster(), App.getApplication().getImageLoader());
+            } else {
+                posterImageView.setImageResource(R.drawable.ic_broken_image_black_48dp);
+            }
             movieNameTextView.setText(movie.getTitle());
             movieDetailTextView.setText(String.format("%s, %s", movie.getYear(), movie.getType()));
         }
@@ -111,5 +120,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesHold
 
     public ItemClickListener<Movie> getListener() {
         return listener;
+    }
+
+    public void clear() {
+        if(this.movies != null) {
+            int count = getItemCount();
+            this.movies.clear();
+
+            notifyItemRangeRemoved(0, count);
+        }
     }
 }

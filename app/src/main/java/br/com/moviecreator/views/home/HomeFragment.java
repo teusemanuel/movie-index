@@ -150,6 +150,7 @@ public class HomeFragment extends AbstractFragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if (!query.equals(criteria) && query.length() > 2) {
+                    adapter.clear();
                     searchMovie(query);
                     criteria = query;
                 }
@@ -193,7 +194,7 @@ public class HomeFragment extends AbstractFragment {
     }
 
     public void searchMovie(final String nameMovie) {
-        new MovieProxy(getActivity()).findMoviesByName(getTag(), nameMovie, new ProxyListener<MoviesSearch>() {
+        new MovieProxy(getActivity()).findMoviesByName(getRequestTag(), nameMovie, new ProxyListener<MoviesSearch>() {
             @Override
             public void onStart() {
                 swipeRefreshLayout.setRefreshing(true);

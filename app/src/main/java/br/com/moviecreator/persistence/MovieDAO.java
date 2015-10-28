@@ -46,7 +46,7 @@ public class MovieDAO {
 
     public static final boolean delete(@NonNull Integer id, @NonNull Context context) {
         SQLiteDatabase db = Entity.getInstance(context).getWritableDatabase();
-        int deletedRows = db.delete(Movie.MovieEntry.TABLE_NAME, null, new String[]{String.valueOf(id)});
+        int deletedRows = db.delete(Movie.MovieEntry.TABLE_NAME, "_id = ?", new String[]{String.valueOf(id)});
         return deletedRows > 0 ? true : false;
     }
 

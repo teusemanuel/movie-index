@@ -207,8 +207,8 @@ public class HomeFragment extends AbstractFragment {
         new MovieProxy(getActivity()).findMoviesByName(getRequestTag(), nameMovie, new ProxyListener<MoviesSearch>() {
             @Override
             public void onStart() {
-                boryLayout.setVisibility(View.VISIBLE);
-                swipeRefreshLayout.setVisibility(View.GONE);
+                boryLayout.setVisibility(View.GONE);
+                swipeRefreshLayout.setVisibility(View.VISIBLE);
                 swipeRefreshLayout.setRefreshing(true);
             }
 

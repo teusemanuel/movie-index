@@ -15,15 +15,26 @@
  */
 package br.com.moviecreator.views.archived;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import br.com.moviecreator.R;
+import br.com.moviecreator.models.Movie;
+import br.com.moviecreator.persistence.MovieDAO;
 import br.com.moviecreator.utils.AppNavigationListner;
+import br.com.moviecreator.views.adapters.ItemClickListener;
+import br.com.moviecreator.views.adapters.MoviesAdapter;
+import br.com.moviecreator.views.adapters.SpacesItemDecoration;
+import br.com.moviecreator.views.details.DetailsActivity;
 import br.com.moviecreator.views.fragments.AbstractFragment;
 
 /**
@@ -36,6 +47,8 @@ public class ArchivedMoviesFragment extends AbstractFragment {
     private static final String TAG = ArchivedMoviesFragment.class.getSimpleName();
     private String criteria;
     private AppNavigationListner navigationListner;
+    private GridLayoutManager gridLayoutManager;
+    private MoviesAdapter adapter;
 
     public ArchivedMoviesFragment(){}
 
@@ -61,11 +74,43 @@ public class ArchivedMoviesFragment extends AbstractFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.archived_app_bar, container, false);
+        View rootView = inflater.inflate(R.layout.archived_app_bar, container, false);
+
+        List<Movie> movieList = MovieDAO.findAllMovies(getActivity());
+        adapter = new MoviesAdapter(movieList, LayoutInflater.from(getActivity()), new ItemClickListener<Movie>() {
+            @Override
+            public void onItemClick(Movie movie) {
+                Bundle extra = new Bundle();
+                extra.putSerializable(DetailsActivity.DETAILS_EXTRA, movie);
+                extra.putBoolean(DetailsActivity.IS_LOCAL_FILE, true);
+
+                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtras(extra);
+
+                getActivity().startActivity(intent);
+            }
+        });
+
+        gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+
+        RecyclerView recyclerViewMovies = (RecyclerView) rootView.findViewById(R.id.movies_result_list);
+        recyclerViewMovies.setHasFixedSize(true);
+        recyclerViewMovies.setLayoutManager(gridLayoutManager);
+        recyclerViewMovies.setAdapter(adapter);
+        recyclerViewMovies.addItemDecoration(new SpacesItemDecoration(10));
+
+        return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
     }
 }

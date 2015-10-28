@@ -1,10 +1,12 @@
 package br.com.moviecreator.proxies;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.view.View;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -74,6 +76,64 @@ public abstract class AbstractProxy {
                 }
             }
         }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(final VolleyError error) {
+                Activity activity = activityRef.get();
+
+                if (activity != null) {
+                    activity.runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            try {
+                                proxyListener.onFailure(error);
+                                proxyListener.onComplete();
+                            } catch (Exception e) {
+                                LogUtils.logError("AbstractProxy", e);
+                            }
+                        }
+                    });
+                }
+            }
+        }), tag);
+    }
+
+    void createAndScheduleImageRequest(String tag, String url, final ProxyListener proxyListener, View view) {
+        Activity activity = activityRef.get();
+
+        if (activity != null) {
+            activity.runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    proxyListener.onStart();
+                }
+            });
+        }
+
+        App.getApplication().addToRequestQueue(this, view, new ImageRequest(url, new Response.Listener<Bitmap>() {
+
+            @Override
+            public void onResponse(final Bitmap response) {
+                Activity activity = activityRef.get();
+
+                if (activity != null) {
+                    activity.runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            try {
+                                proxyListener.onSuccess(response);
+                                proxyListener.onComplete();
+                            } catch (Exception e) {
+                                LogUtils.logError("AbstractProxy", e);
+                            }
+                        }
+                    });
+                }
+            }
+        },0,0, null, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(final VolleyError error) {

@@ -15,6 +15,8 @@
  */
 package br.com.moviecreator.views.adapters;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,7 +53,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesHold
 
     @Override
     public MoviesHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = inflater.inflate(R.layout.home_content_adapter, parent, false);
+        View itemView = inflater.inflate(R.layout.movie_content_adapter, parent, false);
         return new MoviesHolder(itemView);
     }
 
@@ -64,7 +67,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesHold
 
     @Override
     public int getItemCount() {
-        return movies.size();
+        return movies == null ? 0 : movies.size();
     }
 
     public void addAll(Collection<Movie> collection) {
@@ -103,8 +106,16 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesHold
             this.movie = movie;
 
 
-            if(!TextUtils.isEmpty(movie.getPoster()) && movie.getPoster().startsWith("http://ia.media-imdb.com")) {
+            if(TextUtils.isEmpty(movie.getPosterPath()) && !TextUtils.isEmpty(movie.getPoster()) && movie.getPoster().startsWith("http://ia.media-imdb.com")) {
                 posterImageView.setImageUrl(movie.getPoster(), App.getApplication().getImageLoader());
+            } else if(!TextUtils.isEmpty(movie.getPosterPath())) {
+                File imgFile = new  File(movie.getPosterPath());
+                if(imgFile.exists()) {
+                    Bitmap movieBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                    posterImageView.setImageBitmap(movieBitmap);
+                } else {
+                    posterImageView.setImageResource(R.drawable.ic_broken_image_black_48dp);
+                }
             } else {
                 posterImageView.setImageResource(R.drawable.ic_broken_image_black_48dp);
             }

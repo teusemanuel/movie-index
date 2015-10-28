@@ -15,6 +15,8 @@
  */
 package br.com.moviecreator.proxies.endpoints;
 
+import android.net.Uri;
+
 import br.com.moviecreator.R;
 import br.com.moviecreator.views.app.App;
 
@@ -25,11 +27,11 @@ import br.com.moviecreator.views.app.App;
 public class Urls {
 
     public static String findMoviesByName(String name) {
-        return String.format(getUrlApi(), String.format("?s=%s", name));
+        return String.format(getUrlApi(), String.format("?s=%s", Uri.encode(name)));
     }
 
     public static String getMovieByName(String name) {
-        return String.format(getUrlApi(), String.format("?t=%s", name));
+        return String.format(getUrlApi(), String.format("?t=%s", Uri.encode(name)));
     }
 
     private static String getUrlApi() {

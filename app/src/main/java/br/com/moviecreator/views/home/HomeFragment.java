@@ -17,7 +17,9 @@ package br.com.moviecreator.views.home;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -33,6 +35,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.android.volley.VolleyError;
 
@@ -46,7 +49,9 @@ import br.com.moviecreator.proxies.listeners.ProxyListener;
 import br.com.moviecreator.utils.AppNavigationListner;
 import br.com.moviecreator.views.adapters.ItemClickListener;
 import br.com.moviecreator.views.adapters.MoviesAdapter;
+import br.com.moviecreator.views.adapters.SpacesItemDecoration;
 import br.com.moviecreator.views.create.CreateMovieFragment;
+import br.com.moviecreator.views.details.DetailsActivity;
 import br.com.moviecreator.views.fragments.AbstractFragment;
 
 /**
@@ -58,6 +63,7 @@ public class HomeFragment extends AbstractFragment {
     private final static String TAG = HomeFragment.class.getSimpleName();
     private String criteria;
     private AppNavigationListner navigationListner;
+    private LinearLayout boryLayout;
     private SwipeRefreshLayout swipeRefreshLayout;
     private GridLayoutManager gridLayoutManager;
     private MoviesAdapter adapter;
@@ -93,21 +99,33 @@ public class HomeFragment extends AbstractFragment {
         adapter = new MoviesAdapter(new ArrayList<Movie>(), LayoutInflater.from(getActivity()), new ItemClickListener<Movie>() {
             @Override
             public void onItemClick(Movie movie) {
-                //TODO create action go to details
+                Bundle extra = new Bundle();
+                extra.putSerializable(DetailsActivity.DETAILS_EXTRA, movie);
+
+                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtras(extra);
+
+                getActivity().startActivity(intent);
             }
         });
 
         gridLayoutManager = new GridLayoutManager(getActivity(), 2);
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
 
+        boryLayout = (LinearLayout) rootView.findViewById(R.id.home_bory_search);
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark);
         swipeRefreshLayout.setEnabled(false);
 
-        RecyclerView recyclerViewAlerts = (RecyclerView) rootView.findViewById(R.id.movies_result_list);
-        recyclerViewAlerts.setHasFixedSize(true);
-        recyclerViewAlerts.setLayoutManager(gridLayoutManager);
-        recyclerViewAlerts.setAdapter(adapter);
+        RecyclerView recyclerViewMovies = (RecyclerView) rootView.findViewById(R.id.movies_result_list);
+        recyclerViewMovies.setHasFixedSize(true);
+        recyclerViewMovies.setLayoutManager(gridLayoutManager);
+        recyclerViewMovies.setAdapter(adapter);
+        recyclerViewMovies.addItemDecoration(new SpacesItemDecoration(10));
+
+        boryLayout.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setVisibility(View.GONE);
 
         return rootView;
     }
@@ -121,7 +139,13 @@ public class HomeFragment extends AbstractFragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                navigationListner.updateCurrentFragment(new CreateMovieFragment());
+                Handler handler = new Handler();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        navigationListner.updateCurrentFragment(new CreateMovieFragment());
+                    }
+                });
             }
         });
     }
@@ -163,20 +187,6 @@ public class HomeFragment extends AbstractFragment {
                 if (query.equals(criteria) || query.length() < 3) {
                     return true;
                 }
-
-                /*handler.removeCallbacksAndMessages(null);
-                handler.postDelayed(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        if (!query.isEmpty() && query.length() > 2) {
-                            adapter.clear();
-
-                            fetch(null, query);
-                        }
-                    }
-                }, 1000);
-*/
                 return false;
             }
         });
@@ -197,11 +207,14 @@ public class HomeFragment extends AbstractFragment {
         new MovieProxy(getActivity()).findMoviesByName(getRequestTag(), nameMovie, new ProxyListener<MoviesSearch>() {
             @Override
             public void onStart() {
+                boryLayout.setVisibility(View.VISIBLE);
+                swipeRefreshLayout.setVisibility(View.GONE);
                 swipeRefreshLayout.setRefreshing(true);
             }
 
             @Override
             public void onSuccess(MoviesSearch response) {
+
                 adapter.addAll(response.getResult());
             }
 
@@ -214,10 +227,18 @@ public class HomeFragment extends AbstractFragment {
                                 searchMovie(nameMovie);
                             }
                         }).show();
+
             }
 
             @Override
             public void onComplete() {
+                if(adapter.getItemCount() > 0) {
+                    boryLayout.setVisibility(View.GONE);
+                    swipeRefreshLayout.setVisibility(View.VISIBLE);
+                } else {
+                    boryLayout.setVisibility(View.VISIBLE);
+                    swipeRefreshLayout.setVisibility(View.GONE);
+                }
                 swipeRefreshLayout.setRefreshing(false);
             }
         }, getView());

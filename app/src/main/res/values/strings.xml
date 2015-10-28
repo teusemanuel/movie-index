@@ -4,17 +4,22 @@
     <string name="title_home">Top Movies</string>
     <string name="title_create">New Movie</string>
     <string name="title_archived">Archived Movies</string>
+    <string name="title_details">Movie Details</string>
 
     <string name="menu_top_movies">Top Movies</string>
     <string name="menu_archived_movies">Archived Movies</string>
     <string name="menu_new_movie">New Movie</string>
     <string name="menu_action_search">Search Movies</string>
+    <string name="menu_action_save">Save Movies</string>
     <string name="divide_menu_in_app">In application</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="bory_home_search">Search Movies Here</string>
 
     <string name="movie_api_url">http://www.omdbapi.com/%s</string>
+    <string name="title_activity_details">Movie Details</string>
+
+    <string name="hint_movie_title">Movie Title</string>
 </resources>

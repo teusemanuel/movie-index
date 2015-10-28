@@ -13,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import java.io.Serializable;
+
 import br.com.moviecreator.R;
 import br.com.moviecreator.utils.AppNavigationListner;
 import br.com.moviecreator.views.archived.ArchivedMoviesFragment;
@@ -24,9 +26,8 @@ import br.com.moviecreator.views.home.HomeFragment;
  * Created by Mateus Emanuel Araújo on 23/10/15.
  * teusemanuel@gmail.com
  */
-public class AppActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AppNavigationListner {
+public class AppActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AppNavigationListner, Serializable {
 
-    private NavigationView navigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +41,7 @@ public class AppActivity extends AppCompatActivity implements NavigationView.OnN
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         if (savedInstanceState == null) {
@@ -100,7 +101,7 @@ public class AppActivity extends AppCompatActivity implements NavigationView.OnN
     @Override
     public void updateCurrentFragment(@NonNull AbstractFragment currentFragment) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable("NAVIGATION_LISTNER", this);
+        bundle.putSerializable("NAVIGATION_LISTNER", AppActivity.this);
         currentFragment.setArguments(bundle);
 
         getSupportFragmentManager()

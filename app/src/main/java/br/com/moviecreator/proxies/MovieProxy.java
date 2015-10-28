@@ -16,10 +16,12 @@
 package br.com.moviecreator.proxies;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.view.View;
 
 import com.android.volley.Request;
 
+import br.com.moviecreator.models.Movie;
 import br.com.moviecreator.models.MoviesSearch;
 import br.com.moviecreator.proxies.endpoints.Urls;
 import br.com.moviecreator.proxies.listeners.ProxyListener;
@@ -38,7 +40,11 @@ public class MovieProxy extends AbstractProxy {
         createAndScheduleGsonRequest(tag, Request.Method.GET, Urls.findMoviesByName(name), MoviesSearch.class, null, null, proxyListener, view);
     }
 
-    public void getMovieByName(String tag, String name, ProxyListener<Void> proxyListener, View view) {
-        createAndScheduleGsonRequest(tag, Request.Method.GET, Urls.getMovieByName(name), Void.class, null, null, proxyListener, view);
+    public void getMovieByName(String tag, String name, ProxyListener<Movie> proxyListener, View view) {
+        createAndScheduleGsonRequest(tag, Request.Method.GET, Urls.getMovieByName(name), Movie.class, null, null, proxyListener, view);
+    }
+
+    public void getMoviePoster(String tag, String posterUrl, ProxyListener<Bitmap> proxyListener, View view) {
+        createAndScheduleImageRequest(tag, posterUrl, proxyListener, view);
     }
 }

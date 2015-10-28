@@ -10,9 +10,31 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".HomeActivity"
-    tools:showIn="@layout/home_app_bar">
+    tools:showIn="@layout/home_app_bar"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/home_bory_search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/bory_home_search"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+            android:textColor="#1F000000"
+            android:gravity="center" />
+        <ImageView
+            android:layout_marginTop="@dimen/home_bory_vertical_spacing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_search_black_48dp"/>
+    </LinearLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
+        android:visibility="gone"
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

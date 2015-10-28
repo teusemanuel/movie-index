@@ -12,8 +12,17 @@
     tools:context=".HomeActivity"
     tools:showIn="@layout/new_app_bar">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/new_movie_title_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/new_movie_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionSearch"
+            android:singleLine="true"
+            android:hint="@string/hint_movie_title" />
+    </android.support.design.widget.TextInputLayout>
 </LinearLayout>
